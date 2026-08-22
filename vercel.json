@@ -1,0 +1,4 @@
+{
+  "buildCommand": "node --check content/courses.js",
+  "outputDirectory": "."
+}

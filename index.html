@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國立中央大學語言中心 英外語推廣網教育課程報名網站</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-dark:   #1B4B87;
+      --blue:        #2A5FA5;
+      --blue-link:   #3B6FC2;
+      --red-active:  #C53030;
+      --bg:          #F4F6FA;
+      --white:       #FFFFFF;
+      --border:      #C8CDD8;
+      --border-light:#E2E6EF;
+      --text:        #1E2740;
+      --text-muted:  #5C657A;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Site Header ── */
+    .site-header {
+      background: rgb(117, 165, 225);
+      color: #fff;
+      padding: 16px 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.18);
+    }
+    .site-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .06em;
+    }
+
+    /* ── Language Tab Bar ── */
+    .lang-tab-bar {
+      background: var(--white);
+      border-bottom: 3px solid var(--blue);
+      padding: 0 48px;
+      display: flex;
+      gap: 2px;
+      overflow-x: auto;
+    }
+    .lang-tab-bar::-webkit-scrollbar { height: 0; }
+
+    .lang-tab {
+      padding: 11px 26px;
+      border: none;
+      background: none;
+      color: var(--blue-link);
+      font-size: 14.5px;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -3px;
+      transition: background .15s, color .15s;
+      border-radius: 4px 4px 0 0;
+    }
+    .lang-tab:hover:not(.active) { background: #EDF2FC; }
+    .lang-tab.active {
+      background: rgb(133, 177, 236);
+      color: #fff;
+      font-weight: 500;
+      border-bottom: 3px solid var(--blue);
+    }
+
+    /* ── Main ── */
+    .main-content {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 32px 40px 72px;
+    }
+
+    .lang-heading {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .lang-notice {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+
+    /* ── Course cards ── */
+    .course-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .course-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+    }
+
+    .course-tab-bar {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .course-tabs {
+      display: flex;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .course-tab {
+      padding: 9px 22px;
+      border: 1px solid transparent;
+      background: none;
+      color: var(--blue-link);
+      font-size: 13.5px;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .12s;
+      margin-bottom: -1px;
+      position: relative;
+    }
+    .course-tab:hover:not(.active) { background: #F0F4FB; }
+    .course-tab.active {
+      color: var(--red-active);
+      font-weight: 500;
+      border-color: var(--border);
+      border-bottom-color: var(--white);
+      background: var(--white);
+      z-index: 1;
+    }
+
+    .course-register-cell {
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      border-left: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+    .register-btn {
+      display: inline-block;
+      padding: 6px 22px;
+      background: #EA8742;
+      color: #fff;
+      font-size: 13.5px;
+      font-family: inherit;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background .15s;
+      white-space: nowrap;
+    }
+    .register-btn:hover { background: #c96e28; }
+
+    .course-content {
+      padding: 16px 22px;
+      font-size: 13.5px;
+      line-height: 1.85;
+      color: var(--text);
+      min-height: 76px;
+    }
+
+    /* ── 課程內容的懸掛縮排（取代原本手打的 &nbsp;）── */
+    .detail-line {
+      display: flex;
+      align-items: baseline;
+    }
+    .detail-label {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+    .detail-body {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    @media (max-width: 640px) {
+      .detail-line { display: block; }
+      .detail-label { font-weight: 500; }
+    }
+
+    /* ── Syllabus download link ── */
+    .syllabus-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--blue-link);
+      text-decoration: none;
+      font-size: 13.5px;
+      padding: 8px 14px;
+      border: 1px solid var(--border-light);
+      background: #F7F9FD;
+      transition: background .15s, border-color .15s;
+    }
+    .syllabus-download:hover {
+      background: #EDF2FC;
+      border-color: var(--blue-link);
+    }
+    .syllabus-download .doc-icon { flex-shrink: 0; }
+
+    /* ── 報名須知 Dropdown ── */
+    .dropdown-wrapper {
+      position: relative;
+      margin-right: 16px;
+      padding-right: 16px;
+      border-right: 1px solid var(--border);
+    }
+    .dropdown-menu {
+      display: none;
+      position: fixed;
+      background: var(--white);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      z-index: 100;
+      min-width: 180px;
+    }
+    .dropdown-item {
+      display: block;
+      width: 100%;
+      padding: 10px 20px;
+      text-align: left;
+      border: none;
+      border-bottom: 1px solid var(--border-light);
+      background: none;
+      color: var(--blue-link);
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .dropdown-item:last-child { border-bottom: none; }
+    .dropdown-item:hover { background: #EDF2FC; }
+    .dropdown-item.active {
+      color: var(--blue);
+      font-weight: 500;
+      background: #EDF2FC;
+    }
+
+    .notice-content {
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 28px 32px;
+      font-size: 14px;
+      line-height: 1.9;
+      color: var(--text);
+    }
+
+    .notice-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--blue);
+      margin: 24px 0 10px;
+    }
+    .notice-section-title:first-child { margin-top: 0; }
+
+    .fee-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin-bottom: 4px;
+    }
+    .fee-table th, .fee-table td {
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      vertical-align: top;
+    }
+    .fee-table th {
+      background: rgb(117, 165, 225);
+      color: #fff;
+      font-weight: 500;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .fee-table td:last-child {
+      white-space: nowrap;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .fee-table tr:nth-child(even) td { background: #F7F9FD; }
+
+    .refund-list {
+      padding-left: 24px;
+      margin: 12px 0 0;
+      line-height: 2;
+    }
+    .refund-list li { margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>國立中央大學語言中心 英外語推廣網教育課程報名網站</h1>
+</header>
+
+<div class="lang-tab-bar" id="langTabBar"></div>
+
+<main class="main-content">
+  <h2 class="lang-heading" id="langHeading"></h2>
+  <p class="lang-notice" id="langNotice">
+    1. 按下報名按鈕，填寫報名資料&emsp;
+    2. 等候開課通知，再依繳費通知匯款
+  </p>
+  <div class="course-list" id="courseList"></div>
+</main>
+
+<script src="content/courses.js"></script>
+<script>
+
+const NOTICES = [
+  { label: "學費及優惠辦法", content: `
+    <h3 class="notice-section-title">非學分班</h3>
+    <table class="fee-table">
+      <thead><tr><th>身份類別</th><th>學費金額（新台幣）</th></tr></thead>
+      <tbody>
+        <tr><td>(1) 新生（未報名過本中心開設之推廣課程者）</td><td>5,400 元整</td></tr>
+        <tr><td>(2) 9 折：舊生、身心障礙者、原住民、低收入戶、65歲以上長者、中大在學學生、教職員或兩人(含）報名同一課程者、中央大學校友、中央大學學員/教職員眷屬</td><td>4,860 元整</td></tr>
+        <tr><td>(3) 88折：三人以上同時報名同一課程者或開課前兩週報名早鳥優惠者</td><td>4,752 元整</td></tr>
+      </tbody>
+    </table>
+    <h3 class="notice-section-title">學分班 54小時</h3>
+    <table class="fee-table">
+      <thead><tr><th>身份類別</th><th>學費金額（新台幣）</th></tr></thead>
+      <tbody>
+        <tr><td>(1) 新生（未報名過本中心開設之推廣課程者）</td><td>9,999 元</td></tr>
+        <tr><td>(2) 9 折：舊生、身心障礙者、原住民、低收入戶、65歲以上長者、中大在學學生、教職員或兩人(含）報名同一課程者、中央大學校友、中央大學學員/教職員眷屬</td><td>8,999 元</td></tr>
+        <tr><td>(3) 88折：三人以上同時報名同一課程者或開課前兩週報名早鳥優惠者</td><td>8,799 元</td></tr>
+      </tbody>
+    </table>
+    <h3 class="notice-section-title">學分班 36小時</h3>
+    <table class="fee-table">
+      <thead><tr><th>身份類別</th><th>學費金額（新台幣）</th></tr></thead>
+      <tbody>
+        <tr><td>(1) 新生（未報名過本中心開設之推廣課程者）</td><td>6,666 元</td></tr>
+        <tr><td>(2) 9 折：舊生、身心障礙者、原住民、低收入戶、65歲以上長者、中大在學學生、教職員或兩人(含）報名同一課程者、中央大學校友、中央大學學員/教職員眷屬</td><td>5,999 元</td></tr>
+        <tr><td>(3) 88折：三人以上同時報名同一課程者或開課前兩週報名早鳥優惠者</td><td>5,866 元</td></tr>
+      </tbody>
+    </table>
+  ` },
+  { label: "退費準則",       content: `
+    <p>學員因故辦理退費時，須憑中央大學開立之收據正本送交語言中心辦公室辦理相關手續。退費規定如下：</p>
+    <ol class="refund-list">
+      <li>自報名繳費至實際上課前退學者，退還已繳學分費、雜費等各項費用之九成。</li>
+      <li>自實際上課之日算起未逾全期三分之一者，退還已繳學分費、雜費等各 項費用之半數。</li>
+      <li>在班時間已逾全期三分之一者，不予退費。</li>
+      <li>若本課程因人數不足或其他特殊原因無法開課，將全額退費。</li>
+      <li>退費手續辦理期間約一至兩個月，且需檢附報名者本人之郵局或銀行局號帳號，俾便匯款；如無郵局或銀行帳戶者，則一律以支票退款。</li>
+    </ol>
+    <p style="margin-top:16px;">
+      <a href="中央大學語言中心英外語推廣教育課程退費申請表.docx" download>退費申請表</a>
+    </p>
+  ` },
+  { label: "CEFR語言能力分級", content: `
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="border:1px solid #ccc;padding:8px 12px;background:#f5f5f5;white-space:nowrap;">等級</th>
+          <th style="border:1px solid #ccc;padding:8px 12px;background:#f5f5f5;">能力分級說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border:1px solid #ccc;padding:8px 12px;font-weight:bold;white-space:nowrap;vertical-align:top;">A1 入門</td>
+          <td style="border:1px solid #ccc;padding:8px 12px;">能理解並運用日常生活常見且與自己喜好有關的表達方式，能介紹、詢問、回答自己或他人相關的個人資訊，例如居住地、人際關係、擁有的事物等，在與他人緩慢、清晰的對話過程中，只能以簡單的方式來互動</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #ccc;padding:8px 12px;font-weight:bold;white-space:nowrap;vertical-align:top;">A2 初級</td>
+          <td style="border:1px solid #ccc;padding:8px 12px;">能理解與自己最貼近的生活環境所常用的表達方式與句型，例如基本的個人及家庭資訊、購物、地理環境、工作，能在例行性工作上做簡單而直接的日常溝通對話，也能夠用粗淺的詞語來描述個人背景與周遭環境的事物</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #ccc;padding:8px 12px;font-weight:bold;white-space:nowrap;vertical-align:top;">B1 中級</td>
+          <td style="border:1px solid #ccc;padding:8px 12px;">能理解在職場、學校、休閒場合所遇到的熟悉事物，在對應語言地區旅遊時能應付大部分的可能狀況，在針對自己感興趣或熟悉的事物能夠提出簡單的相關資訊，另外還可描述經驗、事件、夢想、抱負等意見及建議等簡易說明</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #ccc;padding:8px 12px;font-weight:bold;white-space:nowrap;vertical-align:top;">B2 中高級</td>
+          <td style="border:1px solid #ccc;padding:8px 12px;">能理解複雜文章段落中的具體和抽象主旨，可與母語人士進行自然且流暢的溝通對話，在廣泛主題的探討過程中可說出清晰、細節性的文字，且有能力針對特定議題闡述個人觀點意見與利弊分析</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #ccc;padding:8px 12px;font-weight:bold;white-space:nowrap;vertical-align:top;">C1 高級</td>
+          <td style="border:1px solid #ccc;padding:8px 12px;">能理解那些長篇文章或意義含蓄的廣泛訊息，可自然、流暢的表達自己的意見，且沒有明顯的詞窮反應，能在社交場合、專業學術場合上有效率的運用語言能力，對較深入的議題能產生清晰、有組織、細節性的文字表達</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #ccc;padding:8px 12px;font-weight:bold;white-space:nowrap;vertical-align:top;">C2 精通</td>
+          <td style="border:1px solid #ccc;padding:8px 12px;">能夠輕易理解任何訊息，並可將不同的口頭或書面上的資訊統整出摘要大綱、重新組織論點，且能夠有條理地提出意見表達，即使在複雜的場合上也能辨別出更深層的意涵</td>
+        </tr>
+      </tbody>
+    </table>
+  ` }
+];
+
+  /* ── 以下為程式邏輯，填資料時不需要修改 ── */
+  const LANGUAGES = Object.keys(DATA);
+
+  /* 把 content/courses.js 裡的純文字排版成畫面：
+     行首 8 字內出現全形「：」→ 視為一個項目，拆成標籤 + 內文，
+     內文過長時自動懸掛縮排對齊（取代原本手打的 &nbsp;）；
+     其餘的行 → 視為上一個項目的續行。 */
+  const CH_NUM = "一二三四五六七八九十";
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, c =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  function renderBlock(text, numbered) {
+    const blocks = [];
+    String(text || "").split("\n").forEach(raw => {
+      const line = raw.trim();
+      if (!line) return;
+      const ci = line.indexOf("：");
+      if (ci > 0 && ci <= 8) {
+        blocks.push({ label: line.slice(0, ci + 1), lines: [line.slice(ci + 1)] });
+      } else if (blocks.length) {
+        blocks[blocks.length - 1].lines.push(line);
+      } else {
+        blocks.push({ label: null, lines: [line] });
+      }
+    });
+
+    let n = 0;
+    return blocks.map(b => {
+      const body = b.lines.map(escapeHtml).join("<br>");
+      if (!b.label) return `<div>${body}</div>`;
+      const prefix = numbered ? (n < CH_NUM.length ? CH_NUM[n] : String(n + 1)) + "、" : "";
+      n++;
+      return `<div class="detail-line">` +
+             `<span class="detail-label">${prefix}${escapeHtml(b.label)}</span>` +
+             `<span class="detail-body">${body}</span></div>`;
+    }).join("");
+  }
+
+  let currentLang = LANGUAGES[0];
+  let currentView = 'lang'; // 'lang' | 'notice'
+  let currentNoticeIdx = 0;
+  const activeTabMap = {};
+
+  function renderLangTabs() {
+    const langTabsHtml = LANGUAGES.map(lang =>
+      `<button class="lang-tab${lang === currentLang && currentView === 'lang' ? " active" : ""}"
+        onclick="switchLang('${lang}')">${lang}</button>`
+    ).join("");
+
+    const noticeActive = currentView === 'notice';
+    const dropdownItemsHtml = NOTICES.map((n, i) =>
+      `<button class="dropdown-item${noticeActive && currentNoticeIdx === i ? " active" : ""}"
+        onclick="switchNotice(${i})">${n.label}</button>`
+    ).join("");
+
+    document.getElementById("langTabBar").innerHTML = `
+      <div class="dropdown-wrapper">
+        <button class="lang-tab${noticeActive ? " active" : ""}">報名須知 ▾</button>
+        <div class="dropdown-menu">${dropdownItemsHtml}</div>
+      </div>` + langTabsHtml;
+
+    const wrapper = document.querySelector('.dropdown-wrapper');
+    const menu = wrapper.querySelector('.dropdown-menu');
+    const trigger = wrapper.querySelector('.lang-tab');
+    let hideTimer = null;
+    const showMenu = () => {
+      clearTimeout(hideTimer);
+      const rect = trigger.getBoundingClientRect();
+      menu.style.top = rect.bottom + 'px';
+      menu.style.left = rect.left + 'px';
+      menu.style.display = 'block';
+    };
+    const hideMenu = () => {
+      hideTimer = setTimeout(() => { menu.style.display = 'none'; }, 150);
+    };
+    wrapper.addEventListener('mouseenter', showMenu);
+    wrapper.addEventListener('mouseleave', hideMenu);
+    menu.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+    menu.addEventListener('mouseleave', hideMenu);
+  }
+
+  function renderNotice() {
+    const notice = NOTICES[currentNoticeIdx];
+    document.getElementById("langHeading").textContent = notice.label;
+    document.getElementById("langNotice").style.display = "none";
+    document.getElementById("courseList").innerHTML =
+      `<div class="notice-content">${notice.content}</div>`;
+  }
+
+  function renderCourses() {
+    document.getElementById("langNotice").style.display = "";
+    document.getElementById("langHeading").textContent = currentLang;
+
+    document.getElementById("courseList").innerHTML = DATA[currentLang].map((course, courseIdx) => {
+      const courseId = `${currentLang}_${courseIdx}`;
+      const ai = activeTabMap[courseId] ?? 0;
+
+      let html;
+      if (ai === 3) {
+        html = `
+          <a href="${course.簡章檔案}" download class="syllabus-download">
+            <svg class="doc-icon" width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.5 1H3C1.9 1 1 1.9 1 3V19C1 20.1 1.9 21 3 21H15C16.1 21 17 20.1 17 19V7.5L10.5 1Z"
+                fill="#EDF2FC" stroke="#3B6FC2" stroke-width="1.2"/>
+              <path d="M10.5 1V7.5H17" stroke="#3B6FC2" stroke-width="1.2"/>
+              <rect x="4" y="11" width="6" height="1.2" rx="0.6" fill="#3B6FC2"/>
+              <rect x="4" y="14" width="9" height="1.2" rx="0.6" fill="#3B6FC2"/>
+              <rect x="4" y="17" width="7" height="1.2" rx="0.6" fill="#3B6FC2"/>
+            </svg>
+            ${escapeHtml(course.簡章名稱)}
+          </a>`;
+      } else {
+        const field = ["課程介紹", "課程詳情", "授課教師"][ai];
+        html = renderBlock(course[field], ai === 0);
+      }
+
+      const courseTitle = `${courseIdx + 1}. ${course.課程名稱}`;
+      const tabsHtml = [courseTitle, "課程詳情", "授課教師", "簡章"].map((lbl, i) =>
+        `<button class="course-tab${ai === i ? " active" : ""}"
+          onclick="switchTab('${courseId}',${i})">${escapeHtml(lbl)}</button>`
+      ).join("");
+
+      return `
+        <div class="course-card">
+          <div class="course-tab-bar">
+            <div class="course-tabs">${tabsHtml}</div>
+            <div class="course-register-cell">
+              <a href="${course.報名連結}" target="_blank" class="register-btn">報名</a>
+            </div>
+          </div>
+          <div class="course-content">${html}</div>
+        </div>`;
+    }).join("");
+  }
+
+  function switchLang(lang) {
+    currentLang = lang;
+    currentView = 'lang';
+    renderLangTabs();
+    renderCourses();
+  }
+
+  function switchNotice(idx) {
+    currentNoticeIdx = idx;
+    currentView = 'notice';
+    renderLangTabs();
+    renderNotice();
+  }
+
+  function switchTab(courseId, idx) {
+    activeTabMap[courseId] = idx;
+    renderCourses();
+  }
+
+  renderLangTabs();
+  renderCourses();
+</script>
+</body>
+</html>
